@@ -1,0 +1,16 @@
+stored_hs/
+hf_token.txt
+__pycache__/
+*.pyc
+packages-microsoft*
+.vscode/
+.DS_Store
+*.download
+*.zip
+nuget.config
+*/layer_search_out_old
+*/out_old
+*/out
+*/representations
+*/representations_old/
+find_best_layer_test.sh
