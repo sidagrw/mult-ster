@@ -1,0 +1,21 @@
+<|endoftext|>Write a Python function to sort a list using insertion sort.
+
+>>> from collections import List >>> list = List( 'a' , 'b' ) >>> list . sort ( 'a' , 'b' )
+
+The list is sorted by the first element of the list.
+
+>>> list . sort ( 'a' , 'b' )
+
+The list is sorted by the second element of the list.
+
+>>> list . sort ( 'a' , 'b' )
+
+The list is sorted by the third element of the list.
+
+>>> list . sort ( 'a' , 'b' )
+
+The list is sorted by the fourth element of the list.
+
+>>> list . sort ( 'a' , 'b' )
+
+The list is sorted by the fifth element of

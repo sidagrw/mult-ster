@@ -1,0 +1,17 @@
+Write a Python function to check if two strings are anagrams.
+
+>>> from django.contrib import * >>> from django.contrib import * >>> def check_a_string ( self ): return True >>> check_a_string ( self )
+
+The check_a_string() method checks if two strings are anagrams.
+
+>>> check_a_string ( 'abcdefghijklmnopqrstuvwxyz' )
+
+The check_a_string() method checks if two strings are anagrams.
+
+>>> check_a_string ( 'abcdefghijklmnopqrstuvwxyz' )
+
+The check_a_string() method checks if two strings are anagrams.
+
+>>> check_a_string ( 'abcdefghijklmnopqrstuvwxyz' )
+
+The check

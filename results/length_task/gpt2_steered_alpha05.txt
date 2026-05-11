@@ -1,0 +1,19 @@
+<|endoftext|>Write a Python function to check if two strings are anagrams.
+
+>>> from django.db import db >>> print ( 'Hello, world!' ) >>> print ( 'Hello, world!' )
+
+Check if the string is anagrams
+
+>>> from django.db import db >>> print ( 'Hello, world!' ) >>> print ( 'Hello, world!' )
+
+Check if the string is anagrams
+
+>>> from django.db import db >>> print ( 'Hello, world!' ) >>> print ( 'Hello, world!' )
+
+Check if the string is anagrams
+
+>>> from django.db import db >>> print ( 'Hello, world!' ) >>> print ( 'Hello, world!' )
+
+Check if the string is anagrams
+
+>>> from django.db import db >>> print ( 'Hello, world!' ) >>> print ( 'Hello, world!' )

@@ -1,0 +1,19 @@
+<|endoftext|>Write a Python function to check if two strings are anagrams.
+
+>>> from django.contrib import check_if_two_strings >>> check_if_two_strings( 'abc' , 'abcdef' , 'abcdef' )
+
+Check if two strings are anagrams.
+
+>>> check_if_two_strings( 'abcdef' , 'abcdef' , 'abcdef' )
+
+Check if two strings are anagrams.
+
+>>> check_if_two_strings( 'abcdef' , 'abcdef' , 'abcdef' )
+
+Check if two strings are anagrams.
+
+>>> check_if_two_strings( 'abcdef' , 'abcdef' , 'abcdef' )
+
+Check if two strings are anagrams.
+
+>>> check_if_two_strings( 'abcdef' , 'abc

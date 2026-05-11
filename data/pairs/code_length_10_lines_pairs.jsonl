@@ -1,0 +1,10 @@
+{"base_prompt":"Write a Python function to compute the factorial of n.","instructed_prompt":"Write a Python function to compute the factorial of n. Use at most 10 lines of Python code."}
+{"base_prompt":"Write a Python function to compute the nth Fibonacci number.","instructed_prompt":"Write a Python function to compute the nth Fibonacci number. Use at most 10 lines of Python code."}
+{"base_prompt":"Write a Python function to check whether a string is a palindrome.","instructed_prompt":"Write a Python function to check whether a string is a palindrome. Use at most 10 lines of Python code."}
+{"base_prompt":"Write a Python function to return the maximum value in a list.","instructed_prompt":"Write a Python function to return the maximum value in a list. Use at most 10 lines of Python code."}
+{"base_prompt":"Write a Python function to count vowels in a string.","instructed_prompt":"Write a Python function to count vowels in a string. Use at most 10 lines of Python code."}
+{"base_prompt":"Write a Python function to reverse a list without using the reverse method.","instructed_prompt":"Write a Python function to reverse a list without using the reverse method. Use at most 10 lines of Python code."}
+{"base_prompt":"Write a Python function to remove duplicates from a list while preserving order.","instructed_prompt":"Write a Python function to remove duplicates from a list while preserving order. Use at most 10 lines of Python code."}
+{"base_prompt":"Write a Python function to find the greatest common divisor of two integers.","instructed_prompt":"Write a Python function to find the greatest common divisor of two integers. Use at most 10 lines of Python code."}
+{"base_prompt":"Write a Python function to merge two sorted lists.","instructed_prompt":"Write a Python function to merge two sorted lists. Use at most 10 lines of Python code."}
+{"base_prompt":"Write a Python function to check whether a number is prime.","instructed_prompt":"Write a Python function to check whether a number is prime. Use at most 10 lines of Python code."}

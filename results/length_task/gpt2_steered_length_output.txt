@@ -1,0 +1,11 @@
+<|endoftext|>Write a Python function to check if two strings are anagrams.
+
+>>> from django.db import Base class Base( Base.Base): def __init__(self, name, value): self.name = name self.value = value def get_value(self): return Base.get_value(self)
+
+The base.get_value method will return a Base object with the name and the value.
+
+>>> from django.db import Base class Base( Base.Base): def __init__(self, name, value): self.name = name self.value = value def get_value(self): return Base.get_value(self)
+
+The get_value method will return a Base object with the name and the value.
+
+>>> from django.db import Base class Base( Base.Base): def __init__(self, name, value): self.name =
