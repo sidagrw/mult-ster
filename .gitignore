@@ -15,3 +15,4 @@ __pycache__/
 colab_env/
 huggingface_cache/
 outputs/
+.conda/
