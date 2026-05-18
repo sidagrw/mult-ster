@@ -4,7 +4,7 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 PARENT_DIR="$( cd "$SCRIPT_DIR/.." &> /dev/null && pwd )"
 export PYTHONPATH="$PYTHONPATH:$PARENT_DIR"
 
-MODEL="microsoft/Phi-3-mini-4k-instruct"
+MODEL="mistralai/Mistral-7B-Instruct-v0.1"
 
 python "UTF_8.py"
 
@@ -12,11 +12,11 @@ python "UTF_8.py"
 python "$SCRIPT_DIR/prep_data.py"
 
 # 3. Extraction (Point to the SIBLING folder)
-# python "$PARENT_DIR/format/compute_representations.py" \
-#     model_name="$MODEL" \
-#     use_data_subset=True \
-#     data_subset_ratio=0.1 \
-#     +batch_size=128
+python "$PARENT_DIR/format/compute_representations.py" \
+    model_name="$MODEL" \
+    use_data_subset=True \
+    data_subset_ratio=0.1 \
+    +batch_size=128
 
 # 4. Search
 # python "$PARENT_DIR/format/find_best_layer.py" \

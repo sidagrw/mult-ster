@@ -20,6 +20,10 @@ from ifeval_scripts.evaluation_main import test_instruction_following_loose
 
 config_path = os.path.join(project_dir, 'config/format')
 
+import nltk
+nltk.download('punkt')
+nltk.download('punkt_tab')
+
 
 @hydra.main(config_path=config_path, config_name='format_evaluation')
 def run_experiment(args: DictConfig):
