@@ -32,7 +32,7 @@ def find_best_layer(args: DictConfig):
     device = args.device
 
     # load the data
-    with open(f'{project_dir}/{args.data_path}') as f:
+    with open(f'{project_dir}/{args.data_path}', encoding='utf-8') as f:
         data = f.readlines()
         data = [json.loads(d) for d in data]
 
@@ -214,7 +214,7 @@ def find_best_layer(args: DictConfig):
     with open(f'{folder}/{args_file_name}', 'w') as f:
         f.write(OmegaConf.to_yaml(args))
 
-    with open(out_path, 'w') as f:
+    with open(out_path, 'w', encoding='utf-8') as f:
         for line in out_lines:
             f.write(json.dumps(line) + '\n')
 

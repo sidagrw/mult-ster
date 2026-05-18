@@ -8,3 +8,10 @@ outputs/
 *.pt
 *.pth
 *.ckpt
+*.h5
+*.pt
+*.zip
+__pycache__/
+colab_env/
+huggingface_cache/
+outputs/

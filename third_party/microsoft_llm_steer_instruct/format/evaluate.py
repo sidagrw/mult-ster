@@ -26,7 +26,7 @@ def run_experiment(args: DictConfig):
     print(OmegaConf.to_yaml(args))
 
     # load the data
-    with open(f'{project_dir}/{args.data_path}') as f:
+    with open(f'{project_dir}/{args.data_path}', encoding='utf-8') as f:
         data = f.readlines()
         data = [json.loads(d) for d in data]
 

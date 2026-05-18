@@ -22,7 +22,7 @@ config_path = os.path.join(project_dir, 'config/format')
 def compute_representations(args: DictConfig):
     print(OmegaConf.to_yaml(args))
 
-    with open(f'{project_dir}/{args.data_path}') as f:
+    with open(f'{project_dir}/{args.data_path}', encoding='utf-8') as f:
         data = f.readlines()
         data = [json.loads(d) for d in data]
 
