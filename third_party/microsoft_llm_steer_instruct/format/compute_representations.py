@@ -39,7 +39,7 @@ def compute_representations(args: DictConfig):
     # load tokenizer and model
     model_name = args.model_name
     model, tokenizer = load_model_from_tl_name(model_name, device=args.device, cache_dir=args.transformers_cache_dir)
-    model.to(args.device)
+    # model.to(args.device)  <-- Ryan Fix: Removed for 4-bit compatibility
 
     p_bar = tqdm.tqdm(total=len(data_df))
 

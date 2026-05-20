@@ -7,14 +7,15 @@ export PYTHONPATH="$PARENT_DIR:$PYTHONPATH"
 
 echo "🛠️ PHASE 0: Manual Environment Fix..."
 # Install the exact versions to get out of Package Hell
-mkdir -p /content/mult-ster/third_party/microsoft_llm_steer_instruct/format/representations
-unzip -q /content/drive/MyDrive/reps.zip -d /content/mult-ster/third_party/microsoft_llm_steer_instruct/format/representations
+mkdir -p /root/mult-ster/third_party/microsoft_llm_steer_instruct/format/representations
+unzip -q /content/drive/MyDrive/reps.zip -d /root/mult-ster/third_party/microsoft_llm_steer_instruct/format/representations
 
-pip install -r requirements.txt
+# pip install -r requirements.txt
+# pip install bitsandbytes
 
 # Apply the UTF-8 and NLTK fixes
-py "$SCRIPT_DIR/UTF_8.py"
-py 4bit.py
+python3 "$SCRIPT_DIR/UTF_8.py"
+python3 4bit.py
 
 huggingface-cli login
 
@@ -27,7 +28,7 @@ for MODEL in "${MODELS[@]}"; do
     echo "===================================================="
 
     # Registry Injection for Gemma-2 / Phi-3
-    py -c "import transformer_lens.loading_from_pretrained as l; l.OFFICIAL_MODEL_NAMES.append('$MODEL') if '$MODEL' not in l.OFFICIAL_MODEL_NAMES else None"
+    python3 -c "import transformer_lens.loading_from_pretrained as l; l.OFFICIAL_MODEL_NAMES.append('$MODEL') if '$MODEL' not in l.OFFICIAL_MODEL_NAMES else None"
 
     # Step 1: Extraction (Skip if folder exists)
     REP_FOLDER="$PARENT_DIR/format/representations/$MODEL/subset_0.1"
@@ -35,39 +36,43 @@ for MODEL in "${MODELS[@]}"; do
         echo "✅ Reps found. Skipping extraction."
     else
         echo "🚀 Extracting activations..."
-        py "$PARENT_DIR/format/compute_representations.py" \
+        python3 "$PARENT_DIR/format/compute_representations.py" \
             model_name="$MODEL" \
             use_data_subset=True \
             data_subset_ratio=0.1 \
-            +batch_size=64
+            +batch_size=1
     fi
 
-    py format/find_best_layer.py \
-        model_name="$MODEL" \
-        representations_folder="subset_0.1" \
-        n_examples_per_instruction=1 \
-        max_generation_length=32 \
-        output_path="layer_search_out/$MODEL/results_folder" \
-        +batch_size=64
+    # python3 format/find_best_layer.py \
+    #     model_name="$MODEL" \
+    #     representations_folder="subset_0.1" \
+    #     n_examples_per_instruction=1 \
+    #     max_generation_length=32 \
+    #     output_path="layer_search_out/$MODEL/results_folder" \
+    #     +batch_size=1
 
-    # 2. PRECOMPUTE
-    # Now that we patched the script, it will look in 'results_folder'
-    py format/precompute_ivs.py \
+    # # 2. PRECOMPUTE
+    # # Now that we patched the script, it will look in 'results_folder'
+    python3 ericFormatReplication/layer14.py
+
+    python3 format/precompute_ivs.py \
         model_name="$MODEL" \
         representations_folder="subset_0.1" \
-        +batch_size=64
+        +batch_size=1 \
+        +specific_layer=14
 
     # Step 2: Sweep through Steering Methods
     for METHOD in "${STEERING_METHODS[@]}"; do
         echo "📊 EVALUATING: Method=$METHOD"
-        py "$PARENT_DIR/format/evaluate.py" \
+        python3 "$PARENT_DIR/format/evaluate.py" \
             model_name="$MODEL" \
             include_instructions=false \
             steering="$METHOD" \
             representations_folder="subset_0.1" \
             max_generation_length=256 \
+            source_layer_idx=14 \
             use_perplexity=false \
-            +batch_size=64
+            +batch_size=1
         echo "💾 Syncing results for $MODEL ($METHOD) to Drive..."
         mkdir -p "/content/drive/MyDrive/ICLR_2026_RESULTS/$MODEL"
         cp -r "$PARENT_DIR/format/out/"* "/content/drive/MyDrive/ICLR_2026_RESULTS/"

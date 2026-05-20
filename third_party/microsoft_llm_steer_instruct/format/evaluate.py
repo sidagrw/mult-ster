@@ -45,7 +45,8 @@ def run_experiment(args: DictConfig):
     else:
         hf_model = False
     model, tokenizer = load_model_from_tl_name(args.model_name, device=args.device, cache_dir=args.transformers_cache_dir, hf_model=hf_model)
-    model.to(args.device)
+    if not getattr(model, 'is_quantized', False) and not hasattr(model, 'hf_device_map'):
+        model.to(args.device) 
 
     total = len(data_df)
     p_bar = tqdm.tqdm(total=total)
@@ -99,13 +100,13 @@ def run_experiment(args: DictConfig):
         if args.steering == 'none' or layer_idx == -1:
             row['steering_layer'] = -1
             if (args.model_name == 'gemma-2-2b' or args.model_name == 'gemma-2-9b'):
-                encoded_example = tokenizer(example, return_tensors='pt').to(args.device)
+                encoded_example = tokenizer(example, return_tensors='pt').to(args.device) 
                 out1 = generate_with_hooks(model, encoded_example['input_ids'], fwd_hooks=[], max_tokens_generated=args.max_generation_length, return_decoded=True)
             else:
                 out1 = generate(model, tokenizer, example, args.device, max_new_tokens=args.max_generation_length)
         
         else:
-            intervention_dir = instr_dir.to(args.device)
+            intervention_dir = instr_dir.to(args.device) 
             row['steering_layer'] = int(layer_idx)
 
             if args.steering == 'add_vector':
@@ -116,7 +117,7 @@ def run_experiment(args: DictConfig):
                 raise ValueError(f"Unknown steering method: {args.steering}")
 
             fwd_hooks = [(tlutils.get_act_name('resid_post', layer_idx), hook_fn)]
-            encoded_example = tokenizer(example, return_tensors='pt').to(args.device)
+            encoded_example = tokenizer(example, return_tensors='pt').to(args.device)  
             
             out1 = generate_with_hooks(model, encoded_example['input_ids'], fwd_hooks=fwd_hooks, max_tokens_generated=args.max_generation_length, return_decoded=True)
             
