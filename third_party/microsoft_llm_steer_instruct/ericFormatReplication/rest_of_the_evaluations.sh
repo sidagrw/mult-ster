@@ -19,7 +19,9 @@ python3 4bit.py
 
 huggingface-cli login
 
-MODELS=("google/gemma-2-2b-it" "mistralai/Mistral-7B-Instruct-v0.1" "microsoft/Phi-3-mini-4k-instruct")
+# MODELS=("google/gemma-2-2b-it" "mistralai/Mistral-7B-Instruct-v0.1" "microsoft/Phi-3-mini-4k-instruct")
+MODELS=("mistralai/Mistral-7B-Instruct-v0.1")
+
 STEERING_METHODS=("add_vector" "adjust_rs")
 
 for MODEL in "${MODELS[@]}"; do
@@ -53,13 +55,13 @@ for MODEL in "${MODELS[@]}"; do
 
     # # 2. PRECOMPUTE
     # # Now that we patched the script, it will look in 'results_folder'
-    python3 ericFormatReplication/layer14.py
+    # python3 ericFormatReplication/layer14.py
 
-    python3 format/precompute_ivs.py \
-        model_name="$MODEL" \
-        representations_folder="subset_0.1" \
-        +batch_size=1 \
-        +specific_layer=14
+    # python3 format/precompute_ivs.py \
+    #     model_name="$MODEL" \
+    #     representations_folder="subset_0.1" \
+    #     +batch_size=1 \
+    #     +specific_layer=14
 
     # Step 2: Sweep through Steering Methods
     for METHOD in "${STEERING_METHODS[@]}"; do
