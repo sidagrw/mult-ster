@@ -19,10 +19,13 @@ python3 4bit.py
 
 huggingface-cli login
 
-# MODELS=("google/gemma-2-2b-it" "mistralai/Mistral-7B-Instruct-v0.1" "microsoft/Phi-3-mini-4k-instruct")
-MODELS=("mistralai/Mistral-7B-Instruct-v0.1")
+MODELS=("google/gemma-2-2b-it" "mistralai/Mistral-7B-Instruct-v0.1" "microsoft/Phi-3-mini-4k-instruct")
 
 STEERING_METHODS=("add_vector" "adjust_rs")
+
+# 2. PRECOMPUTE
+# Now that we patched the script, it will look in 'results_folder'
+python3 ericFormatReplication/layer14.py
 
 for MODEL in "${MODELS[@]}"; do
     echo "===================================================="
@@ -52,10 +55,6 @@ for MODEL in "${MODELS[@]}"; do
     #     max_generation_length=32 \
     #     output_path="layer_search_out/$MODEL/results_folder" \
     #     +batch_size=1
-
-    # # 2. PRECOMPUTE
-    # # Now that we patched the script, it will look in 'results_folder'
-    # python3 ericFormatReplication/layer14.py
 
     # python3 format/precompute_ivs.py \
     #     model_name="$MODEL" \
