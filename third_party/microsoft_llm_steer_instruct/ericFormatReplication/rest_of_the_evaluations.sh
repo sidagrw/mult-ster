@@ -75,8 +75,8 @@ for MODEL in "${MODELS[@]}"; do
             use_perplexity=false \
             +batch_size=1
         echo "💾 Syncing results for $MODEL ($METHOD) to Drive..."
-        mkdir -p "/content/drive/MyDrive/ICLR_2026_RESULTS/$MODEL"
-        cp -r "$PARENT_DIR/format/out/"* "/content/drive/MyDrive/ICLR_2026_RESULTS/"
+        mkdir -p "/content/drive/MyDrive/ICLR_2026v2_RESULTS/$MODEL"
+        cp -r "$PARENT_DIR/format/out/"* "/content/drive/MyDrive/ICLR_2026v2_RESULTS/"
     done
 done
 
