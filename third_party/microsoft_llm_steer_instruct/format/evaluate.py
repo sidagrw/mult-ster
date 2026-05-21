@@ -76,20 +76,31 @@ def run_experiment(args: DictConfig):
 
         if args.steering != 'none':
             instr = row['instruction_id_list_for_eval'][0]
+            
+            # RYAN'S CHARACTER-AGNOSTIC LOOKUP
+            # We check for the name exactly, AND the version with underscores
+            instr_underscore = instr.replace(':', '_')
             all_instr = pre_computed_ivs['instruction'].unique()
+            
             if instr in all_instr:
-                instr_dir = pre_computed_ivs[pre_computed_ivs['instruction'] == instr]['instr_dir'].values[0]
-                instr_dir = torch.tensor(instr_dir, device=args.device)
-                layer_idx = pre_computed_ivs[pre_computed_ivs['instruction'] == instr]['selected_layer'].values[0]
-                avg_proj = pre_computed_ivs[pre_computed_ivs['instruction'] == instr]['avg_proj'].values[0]
+                target_key = instr
+            elif instr_underscore in all_instr:
+                target_key = instr_underscore
             else:
-                print(f'Instruction {instr} not found in pre-computed IVs')
-                instr_dir = torch.zeros(model.cfg.d_model)
+                target_key = None
+
+            if target_key is not None:
+                # Grab the data using the key that actually worked
+                match_row = pre_computed_ivs[pre_computed_ivs['instruction'] == target_key]
+                instr_dir = torch.tensor(match_row['instr_dir'].values[0], device=args.device)
+                layer_idx = int(match_row['selected_layer'].values[0])
+                avg_proj = torch.tensor(match_row['avg_proj'].values[0], device=args.device)
+            else:
+                print(f'❌ Instruction {instr} (or {instr_underscore}) not found!')
+                instr_dir = torch.zeros(model.cfg.d_model).to(args.device)
                 layer_idx = -1
-                avg_proj = -1
-
-            avg_proj = torch.tensor(avg_proj, device=args.device)
-
+                avg_proj = torch.tensor(-1.0, device=args.device)
+        
         # format the prompt
         if args.model_name == 'gemma-2-2b' or args.model_name == 'gemma-2-9b':
             example = f'Q: {prompt}\nA:'
