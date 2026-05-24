@@ -60,9 +60,9 @@ def find_best_layer(args: DictConfig):
     # define layer to perform search over
     n_layers = model.cfg.n_layers
     if 'gemma-2-9b' in args.model_name:
-        layer_range = range(n_layers // 5, n_layers, 3)
+        layer_range = range(n_layers // 5, n_layers, 6) # Mega speed
     else:
-        layer_range = range(n_layers // 5, n_layers, 2)
+        layer_range = range(n_layers // 5, n_layers, 5) # High speed
     
     # -1 indicates "no steering"
     layer_range = [-1] + list(layer_range)
