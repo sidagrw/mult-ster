@@ -4,136 +4,150 @@ import sys
 import json
 import pandas as pd
 import torch
-import numpy as np
 from tqdm import tqdm
 from omegaconf import DictConfig
 import hydra
 
-# Setup paths
 script_dir = os.path.dirname(os.path.abspath(__file__))
 project_dir = os.path.join(script_dir, '..')
 sys.path.append(project_dir)
 
 config_path = os.path.join(project_dir, 'config/format')
 
-@hydra.main(config_path=config_path, config_name='precompute_steering_vectors', version_base=None)
+
+@hydra.main(config_path=config_path, config_name='precompute_steering_vectors')
 def precompute_vectors(args: DictConfig):
-    # 1. DYNAMIC PATH RESOLUTION
-    # This finds YOUR results regardless of if they are in 'results_dir' or the hardcoded 'n_examples8'
-    model_results_path = f"{script_dir}/layer_search_out/{args.model_name}"
-    
-    # Priority list of files to check
-    possible_files = [
-        f"{model_results_path}/results_dir/out_instr.jsonl",
-        f"{model_results_path}/results.jsonl",
-        f"{model_results_path}/n_examples{args.n_examples}_seed{args.seed}/out_instr.jsonl"
-    ]
-    
-    search_file = None
-    for f_path in possible_files:
-        if os.path.exists(f_path):
-            search_file = f_path
-            break
-            
-    if not search_file:
-        raise FileNotFoundError(f"❌ Could not find search results for {args.model_name} in any expected location.")
-
-    print(f"📖 Reading Results from: {search_file}")
-    with open(search_file, 'r', encoding='utf-8') as f:
-        results = [json.loads(line) for line in f]
-    validation_df = pd.DataFrame(results)
-
-    # 2. IDENTIFY INSTRUCTIONS
-    with open(f'{project_dir}/data/format/ifeval_single_instr_format.jsonl', encoding='utf-8') as f:
-        data = [json.loads(d) for d in f.readlines()]
+    with open(f'{project_dir}/data/format/ifeval_single_instr_format.jsonl') as f:
+        data = f.readlines()
+        data = [json.loads(d) for d in data]
     input_data_df = pd.DataFrame(data)
-    
-    # Original Filtering Logic
-    filters = ['detectable_format', 'language', 'change_case', 'punctuation', 'startend']
-    all_instructions = input_data_df['instruction_id_list_for_eval'].apply(lambda x: x[0]).unique()
-    all_instructions = [i for i in all_instructions if any(f in i for f in filters)]
+    all_instructions = list(input_data_df['instruction_id_list_for_eval'].apply(lambda x: x[0]).unique())
 
-    # 3. OPTIMAL LAYER SELECTION (Preserving Original Functionality)
-    optimal_layers = {instr: -1 for instr in all_instructions}
-    
+    # filter out instructions that are not detectable_format, language, change_case, punctuation, or startend
+    filters = ['detectable_format', 'language', 'change_case', 'punctuation', 'startend']
+    all_instructions = list(filter(lambda x: any([f in x for f in filters]), all_instructions))
+
+    w_perplexity = '_with_perplexity' if args.use_perplexity else ''
+    cross_model = '_cross_model' if args.cross_model_steering else ''
+    instr_included = 'instr' if args.include_instructions else 'no_instr'
+
+    folder = f'{script_dir}/layer_search_out'
+    file = f'{folder}/{args.model_name}/n_examples{args.n_examples}_seed{args.seed}{cross_model}{w_perplexity}/out_{instr_included}.jsonl'
+    with open(file, 'r') as f:
+        results = [json.loads(line) for line in f]
+
+    validation_df = pd.DataFrame(results)
+    optimal_layers = { instr: -1 for instr in all_instructions }
+
     for instr in all_instructions:
-        # ID Normalization: Handles the 'language:' prefix bug
-        clean_instr = instr.split(':')[-1] if ':' in instr else instr
-        
-        # Check if we have data for this instruction
-        if instr not in validation_df.instruction_id_list_for_eval.apply(lambda x: x[0] if isinstance(x, list) else x).values:
+        if instr not in validation_df.single_instruction_id.unique():
+            optimal_layers[instr] = -1
             continue
 
-        instr_df = validation_df[validation_df.instruction_id_list_for_eval.apply(lambda x: (x[0] if isinstance(x, list) else x) == instr)]
+        instr_df = validation_df[validation_df.single_instruction_id == instr]
         
-        if args.use_perplexity and 'perplexity' in instr_df.columns:
+        if args.use_perplexity:
+            # add boolean column that is true when perplexity is low
             instr_df['low_perplexity'] = instr_df.perplexity < args.preplexity_threshold
-            df_group = instr_df[['layer', 'follow_all_instructions', 'low_perplexity']].groupby('layer').mean()
-            
-            # Baseline (No steering)
-            accuracy_no_steer = df_group.loc[-1, 'follow_all_instructions'] if -1 in df_group.index else 0
-            baseline_low_ppl = df_group.loc[-1, 'low_perplexity'] if -1 in df_group.index else 0
-            
-            # Penalty for high perplexity
-            df_group.loc[df_group.low_perplexity < baseline_low_ppl, 'follow_all_instructions'] = 0
-            df_group.loc[-1, 'follow_all_instructions'] = accuracy_no_steer # Restore baseline
-            
-            max_acc = df_group.follow_all_instructions.max()
-            optimal_layers[instr] = df_group[df_group.follow_all_instructions == max_acc].index[0]
+
+            df_group_by_layer = instr_df[['layer', 'follow_all_instructions', 'low_perplexity']].groupby('layer').mean()
+
+            if args.model_name == 'gemma-2-9b' or args.model_name == 'gemma-2-2b':
+                baseline_low_perplexity = df_group_by_layer.loc[-1, 'low_perplexity']
+            else:
+                baseline_low_perplexity = 0
+
+            # get accuracy for layer -1
+            accuracy_layer_minus_1 = df_group_by_layer.loc[-1, 'follow_all_instructions']
+
+            df_group_by_layer.loc[df_group_by_layer.low_perplexity > baseline_low_perplexity, 'follow_all_instructions'] = 0
+
+            # restore accuracy for layer -1
+            df_group_by_layer.loc[-1, 'follow_all_instructions'] = accuracy_layer_minus_1
+
+            df_group_by_layer.loc[df_group_by_layer.low_perplexity > baseline_low_perplexity, 'follow_all_instructions'] = 0
+            max_accuracy = df_group_by_layer.follow_all_instructions.max()
+            optimal_layer = df_group_by_layer[df_group_by_layer.follow_all_instructions == max_accuracy].index
+            optimal_layers[instr] = optimal_layer[0]
+
         else:
-            df_group = instr_df[['layer', 'follow_all_instructions']].groupby('layer').mean()
-            max_acc = df_group.follow_all_instructions.max()
-            optimal_layers[instr] = df_group[df_group.follow_all_instructions == max_acc].index[0]
+            max_accuracy = instr_df[['layer', 'follow_all_instructions']].groupby('layer').mean().follow_all_instructions.max()
+            optimal_layer = instr_df[['layer', 'follow_all_instructions']].groupby('layer').mean()[instr_df[['layer', 'follow_all_instructions']].groupby('layer').mean().follow_all_instructions == max_accuracy].index
+            optimal_layers[instr] = optimal_layer[0]
 
-    # 4. VECTOR AGGREGATION (High-Speed Engine)
     rows = []
-    rep_base = f'{script_dir}/representations/{args.model_name}/{args.representations_folder}'
 
-    for instr in tqdm(all_instructions, desc="Aggregating Vectors"):
-        file = f'{rep_base}/{"".join(instr).replace(":", "_")}.h5'
-        if not os.path.exists(file): continue
+    for instr in tqdm(all_instructions):
+        # check if the file exists
+        if args.model_name == 'gemma-2-2b' and args.cross_model_steering:
+            print('Using representations from gemma-2-2b-it')
+            rep_folder = f'{script_dir}/representations/gemma-2-2b-it/{args.representations_folder}'
+        elif args.model_name == 'gemma-2-9b' and args.cross_model_steering:
+            print('Using representations from gemma-2-9b-it')
+            rep_folder = f'{script_dir}/representations/gemma-2-9b-it/{args.representations_folder}'
+        else:
+            rep_folder = f'{script_dir}/representations/{args.model_name}/{args.representations_folder}'
 
+        file =f'{rep_folder}/{"".join(instr).replace(":", "_")}.h5'
+        
+        if not os.path.exists(file):
+            print(f'File {file} does not exist')
+            continue
         results_df = pd.read_hdf(file, key='df')
-        if results_df.empty or 'last_token_rs' not in results_df.columns: continue
 
-        selected_layer = optimal_layers[instr]
-        if selected_layer == -1: continue
+        row = {}
+        row['instruction'] = instr
 
-        # ALPHA SPEED: Stacking vs .tolist()
-        # We use bfloat16 to match A100/T4 optimized extraction
-        hs_instr = torch.from_numpy(np.stack(results_df['last_token_rs'].values)).to(torch.bfloat16)
-        hs_no_instr = torch.from_numpy(np.stack(results_df['last_token_rs_no_instr'].values)).to(torch.bfloat16)
+        hs_instr = results_df['last_token_rs'].to_list()
+        hs_instr = torch.tensor(hs_instr, device=args.device)
+        hs_no_instr = results_df['last_token_rs_no_instr'].to_list()
+        hs_no_instr = torch.tensor(hs_no_instr, device=args.device)
 
+        # check if hs has 4 dimensions
         if len(hs_instr.shape) == 3:
-            hs_instr, hs_no_instr = hs_instr.unsqueeze(2), hs_no_instr.unsqueeze(2)
+            hs_instr = hs_instr.unsqueeze(2)
+            hs_no_instr = hs_no_instr.unsqueeze(2)
 
-        # Compute Direction
-        last_token_mean_diff = (hs_instr - hs_no_instr).mean(dim=0)[:, -1, :]
+        if args.specific_layer is not None:
+            selected_layer = args.specific_layer
+        else:
+            selected_layer = optimal_layers[instr]
+            
+        repr_diffs = hs_instr - hs_no_instr
+        mean_repr_diffs = repr_diffs.mean(dim=0)
+        last_token_mean_diff = mean_repr_diffs[:, -1, :]
+
         instr_dir = last_token_mean_diff[selected_layer] / last_token_mean_diff[selected_layer].norm()
 
-        # Compute Average Projection (Signal Strength)
-        proj = (hs_instr[:, selected_layer, -1, :].to(args.device) @ instr_dir.to(args.device)).mean()
-        proj_no = (hs_no_instr[:, selected_layer, -1, :].to(args.device) @ instr_dir.to(args.device)).mean()
+        # average projection along the instruction direction
+        proj = hs_instr[:, selected_layer, -1, :].to(args.device) @ instr_dir.to(args.device)
+        proj_no_instr = hs_no_instr[:, selected_layer, -1, :].to(args.device) @ instr_dir.to(args.device)
 
-        rows.append({
-            'instruction': instr,
-            'selected_layer': selected_layer,
-            'instr_dir': instr_dir.cpu().float().numpy(),
-            'avg_proj': proj.item(),
-            'avg_proj_no_instr': proj_no.item()
-        })
+        # get average projection along the instruction direction for each layer
+        avg_proj = proj.mean()
+        avg_proj_no_instr = proj_no_instr.mean()
+        
+        if selected_layer == -1:
+            row['selected_layer'] = -1
+            row['instr_dir'] = torch.zeros(hs_instr.shape[-1]).cpu().numpy()
+            row['avg_proj'] = 0
+            row['avg_proj_no_instr'] = 0
+        else:
+            row['selected_layer'] = selected_layer
+            row['instr_dir'] = instr_dir.cpu().numpy()
+            row['avg_proj'] = avg_proj
+            row['avg_proj_no_instr'] = avg_proj_no_instr
 
-    # 5. SAVE FINAL PRODUCT
-    if rows:
-        df_final = pd.DataFrame(rows)
-        w_perplexity = '_with_perplexity' if args.use_perplexity else ''
-        instr_inc = 'instr' if args.include_instructions else 'no_instr'
-        out_name = f'pre_computed_ivs_best_layer_validation{w_perplexity}_{instr_inc}.h5'
-        out_path = f'{rep_base}/{out_name}'
-        df_final.to_hdf(out_path, key='df', mode='w')
-        print(f"✅ IVS SUCCESS: Saved to {out_path}")
+        rows.append(row)
+
+    df = pd.DataFrame(rows)
+
+    # store the df in folder
+    folder = f'{script_dir}/representations/{args.model_name}/{args.representations_folder}'
+    if args.specific_layer is not None:
+        df.to_hdf(f'{folder}/pre_computed_ivs_layer{args.specific_layer}.h5', key='df', mode='w')
     else:
-        print("❌ FAILED: No valid vectors were precomputed. Check your input data.")
-
+        df.to_hdf(f'{folder}/pre_computed_ivs_best_layer_validation{w_perplexity}{cross_model}_{instr_included}.h5', key='df', mode='w')
+            
 if __name__ == '__main__':
     precompute_vectors()
