@@ -5,13 +5,11 @@ __pycache__/
 .env
 .DS_Store
 
-# Large experiment outputs
 outputs/activations/
 outputs/steering/
 *.pt
 *.pth
 *.ckpt
 
-# Model caches
 .cache/
 huggingface/

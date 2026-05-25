@@ -1,0 +1,6 @@
+model,method,alpha,file,total_tokens,code_tokens,word_count,code_lines,max_lines,line_pass,line_excess,token_reduction_pct
+google/gemma-2-2b-it,no_steering,0.0,outputs/generations/gemma2_2b_no_steering_output.txt,54,54,11,21,10,False,11,0.0
+google/gemma-2-2b-it,low_rank_matrix,0.25,outputs/generations/gemma2_2b_steered_alpha025.txt,54,54,11,21,10,False,11,0.0
+google/gemma-2-2b-it,low_rank_matrix,0.5,outputs/generations/gemma2_2b_steered_alpha05.txt,54,54,11,21,10,False,11,0.0
+google/gemma-2-2b-it,low_rank_matrix,1.0,outputs/generations/gemma2_2b_steered_alpha10.txt,54,54,11,21,10,False,11,0.0
+google/gemma-2-2b-it,low_rank_matrix,2.0,outputs/generations/gemma2_2b_steered_alpha20.txt,54,14,11,1,10,True,0,0.0

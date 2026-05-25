@@ -1,5 +1,4 @@
 import argparse
-
 import torch
 from transformers import AutoTokenizer
 from transformer_lens import HookedTransformer
@@ -58,7 +57,7 @@ def main():
     parser.add_argument("--steering_file", required=True)
     parser.add_argument("--prompt", required=True)
     parser.add_argument("--alpha", type=float, default=1.0)
-    parser.add_argument("--max_new_tokens", type=int, default=120)
+    parser.add_argument("--max_new_tokens", type=int, default=40)
     parser.add_argument("--device", default="cuda")
     parser.add_argument("--dtype", choices=["float16", "bfloat16", "float32"], default="float16")
     parser.add_argument("--out", default="outputs/generations/latest.txt")

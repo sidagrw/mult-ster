@@ -55,10 +55,6 @@ def load_tokenizer_compat(model_name):
 
 @torch.no_grad()
 def get_final_token_resid_post_low_memory(model, prompt, layer, device):
-    """
-    Runs the model while saving only one layer's resid_post activation.
-    This avoids run_with_cache(), which stores activations for every layer.
-    """
     tokens = model.to_tokens(prompt, prepend_bos=False).to(device)
 
     saved = {}
