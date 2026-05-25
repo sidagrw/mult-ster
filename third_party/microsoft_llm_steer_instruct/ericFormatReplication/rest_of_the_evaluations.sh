@@ -15,7 +15,7 @@ unzip -q /content/drive/MyDrive/reps.zip -d /root/mult-ster/third_party/microsof
 
 # Apply the UTF-8 and NLTK fixes
 python3 "$SCRIPT_DIR/UTF_8.py"
-python3 "$SCRIPT_DIR/4bit.py"
+# python3 "$SCRIPT_DIR/4bit.py"
 
 # huggingface-cli login
 
@@ -73,7 +73,6 @@ for MODEL in "${MODELS[@]}"; do
             max_generation_length=256 \
             source_layer_idx=14 \
             use_perplexity=false \
-            +batch_size=32
         echo "💾 Syncing results for $MODEL ($METHOD) to Drive..."
         mkdir -p "/content/drive/MyDrive/ICLR_2026v2_RESULTS/$MODEL"
         cp -r "$PARENT_DIR/format/out/"* "/content/drive/MyDrive/ICLR_2026v2_RESULTS/"

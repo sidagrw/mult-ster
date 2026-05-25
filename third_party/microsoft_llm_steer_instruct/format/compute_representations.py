@@ -22,7 +22,7 @@ config_path = os.path.join(project_dir, 'config/format')
 def compute_representations(args: DictConfig):
     print(OmegaConf.to_yaml(args))
 
-    with open(f'{project_dir}/{args.data_path}', encoding='utf-8') as f:
+    with open(f'{project_dir}/{args.data_path}') as f:
         data = f.readlines()
         data = [json.loads(d) for d in data]
 
@@ -39,7 +39,7 @@ def compute_representations(args: DictConfig):
     # load tokenizer and model
     model_name = args.model_name
     model, tokenizer = load_model_from_tl_name(model_name, device=args.device, cache_dir=args.transformers_cache_dir)
-    # model.to(args.device)  <-- Ryan Fix: Removed for 4-bit compatibility
+    model.to(args.device)
 
     p_bar = tqdm.tqdm(total=len(data_df))
 
