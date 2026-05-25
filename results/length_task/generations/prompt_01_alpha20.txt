@@ -1,0 +1,6 @@
+Write a Python function to sort a list using insertion sort.
+```python
+def insertion_sort(data):
+    for i in range(len(data)):
+        if i == 0:
+            data[i] = data[i

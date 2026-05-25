@@ -1,0 +1,2 @@
+Write a Python function to check whether a number is prime.
+Prime number is a number that is a number that is a number that is a number that is a number that is a number that is a number that is a number that is a number that is

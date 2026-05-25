@@ -1,0 +1,21 @@
+Write a Python function to compute the sum of digits of an integer.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.

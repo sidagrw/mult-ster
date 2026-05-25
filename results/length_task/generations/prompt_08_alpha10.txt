@@ -1,0 +1,14 @@
+Write a Python function to count vowels in a string.
+```python
+def count_vowels(string):
+    return len(string)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

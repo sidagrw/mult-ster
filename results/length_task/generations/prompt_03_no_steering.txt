@@ -1,0 +1,16 @@
+Write a Python function to rotate a list to the right by k positions.
+
+```python
+def rotate(self):
+```
+
+```python
+def rotate(self):
+```
+
+```python
+def rotate(self):
+```
+
+```python
+def rotate(

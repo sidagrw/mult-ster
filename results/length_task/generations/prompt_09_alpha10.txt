@@ -1,0 +1,9 @@
+Write a Python function to reverse words in a sentence.
+```python
+def reverse_words(sentence):
+    return " ".join(sentence.split())
+```
+
+**Explanation:**
+
+* The code defines a function called `reverse_words

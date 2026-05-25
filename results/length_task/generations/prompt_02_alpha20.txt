@@ -1,0 +1,21 @@
+Write a Python function to find the second largest number in a list.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
