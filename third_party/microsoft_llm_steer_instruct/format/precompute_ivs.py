@@ -152,7 +152,7 @@ def precompute_vectors(args: DictConfig):
     # store the df in folder
     folder = f'{script_dir}/representations/{args.model_name}/{args.representations_folder}'
     if args.specific_layer is not None:
-        df.to_hdf(f'{folder}/pre_computed_ivs_layer{args.specific_layer}.h5', key='df', mode='w')
+        df.to_hdf(f'{folder}/pre_computed_ivs_layer_{args.specific_layer}.h5', key='df', mode='w')
     else:
         df.to_hdf(f'{folder}/pre_computed_ivs_best_layer_validation{w_perplexity}{cross_model}_{instr_included}.h5', key='df', mode='w')
             
