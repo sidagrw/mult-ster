@@ -1,0 +1,11 @@
+Write a Python function to check whether a number is prime.
+Prime numbers are prime.
+Prime numbers are prime.
+Prime numbers are prime.
+Prime numbers are prime.
+Prime numbers are prime.
+Prime numbers are prime.
+Prime numbers are prime.
+Prime numbers are prime.
+Prime numbers are prime.
+Prime numbers are prime.

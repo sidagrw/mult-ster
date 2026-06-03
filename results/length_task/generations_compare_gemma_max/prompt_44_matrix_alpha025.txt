@@ -1,0 +1,13 @@
+Write a Python function to calculate simple interest.
+```python
+def calculate_simple_interest(principal, rate, time):
+    return principal * rate * time
+```
+
+This function calculates the simple interest based on the principal, rate, and time.
+
+**Example:**
+
+```python
+# Calculate simple interest
+principal = 

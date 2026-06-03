@@ -1,0 +1,9 @@
+Write a Python function to find missing numbers from 1 to n in a list.
+1 to n in a list.
+1 to n in a list.
+1 to n in a list.
+1 to n in a list.
+1 to n in a list.
+1 to n in a list.
+1 to n in a list.
+1 to n

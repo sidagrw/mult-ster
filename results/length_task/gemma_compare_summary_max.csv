@@ -1,0 +1,10 @@
+method,scale_alpha,avg_total_tokens,avg_code_tokens,avg_word_count,avg_code_lines,pass_rate_5_lines,pass_rate_8_lines,pass_rate_10_lines,pass_rate_12_lines,pass_rate_15_lines,syntax_valid_rate,n
+Additive vector,0.25,73.98,68.1,16.26,25.84,0.16,0.18,0.18,0.18,0.18,0.08,50
+Additive vector,0.5,73.98,67.62,16.24,25.8,0.16,0.18,0.18,0.18,0.18,0.06,50
+Additive vector,1.0,73.98,67.62,16.48,25.8,0.16,0.18,0.18,0.18,0.18,0.06,50
+Additive vector,2.0,73.98,67.62,16.48,25.8,0.16,0.18,0.18,0.18,0.18,0.06,50
+Multiplicative matrix,0.25,73.9,61.86,18.7,22.74,0.28,0.28,0.28,0.28,0.28,0.18,50
+Multiplicative matrix,0.5,73.74,53.84,16.82,20.18,0.36,0.36,0.36,0.36,0.36,0.28,50
+Multiplicative matrix,1.0,73.96,46.52,16.18,17.28,0.42,0.44,0.44,0.46,0.46,0.38,50
+Multiplicative matrix,2.0,70.92,40.42,16.5,14.2,0.5,0.54,0.56,0.56,0.56,0.42,50
+No steering,0.0,73.98,68.1,16.26,25.84,0.16,0.18,0.18,0.18,0.18,0.08,50

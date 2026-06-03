@@ -1,0 +1,13 @@
+Write a Python function to sort a list using insertion sort.
+```python
+def sort_list(list_):
+    return list_
+```
+
+**Explanation:**
+
+* The `sort_list` function takes a list as input.
+* The function returns the same list.
+* This is a simple way to sort a list.
+
+

@@ -1,0 +1,9 @@
+Write a Python function to remove all vowels from a string.
+```python
+def remove_vowels(string):
+    return ''.join(c for c in string if c not in 'a'))
+```
+
+This function takes a string as input and returns a new string with the vowels removed.
+
+This is a simple example of how to remove

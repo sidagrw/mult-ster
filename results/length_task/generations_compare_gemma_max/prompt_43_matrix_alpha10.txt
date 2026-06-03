@@ -1,0 +1,9 @@
+Write a Python function to remove punctuation from a string.
+```Python
+def remove_punctuation(string):
+    return string.replace(string, string)
+```
+
+This function takes a string as input and returns a new string with the same content but with the punctuation removed.
+
+This is a simple function that can be used to remove punctuation

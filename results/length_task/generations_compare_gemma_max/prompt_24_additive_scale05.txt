@@ -1,0 +1,10 @@
+Write a Python function to generate the first n Fibonacci numbers.
+```python
+def generate(n):
+    return lambda:
+        return
+```
+
+This code defines a function called `generate` that takes an argument `n`. The function returns a lambda function that does nothing.
+
+This code defines a function called `generate` that takes an argument

@@ -1,0 +1,13 @@
+Write a Python function to generate the first n Fibonacci numbers.
+```python
+def generate(n):
+    return list(n)
+```
+
+This function takes an integer as input and returns a list of that integer.
+
+This is a simple example of how to use a function to generate a list of integers.
+
+
+
+<end_of_turn><eos>

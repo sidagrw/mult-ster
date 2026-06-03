@@ -1,0 +1,27 @@
+Write a Python function to calculate simple interest.
+``` Python function to calculate simple interest.
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```
+```

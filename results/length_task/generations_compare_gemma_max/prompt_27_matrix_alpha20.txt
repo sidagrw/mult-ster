@@ -1,0 +1,6 @@
+Write a Python function to capitalize the first letter of every word.
+``` Python function to capitalize the first letter of every word.
+``` Python function to capitalize the first letter of every word.
+``` Python function to capitalize the first letter of every word.
+``` Python function to capitalize the first letter of every word.
+``` Python function to capitalize the first

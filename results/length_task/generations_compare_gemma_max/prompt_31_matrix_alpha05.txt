@@ -1,0 +1,9 @@
+Write a Python function to find all even numbers in a list.
+
+```python
+def find_all_even_numbers_in_list(list_to_check):
+    return [num for num in list_to_check if num % 2 == 
+    0]
+```
+
+This function takes a list as input and returns a

@@ -1,0 +1,2 @@
+Write a Python function to remove duplicate characters from a string.
+**********************************************************************************************************************

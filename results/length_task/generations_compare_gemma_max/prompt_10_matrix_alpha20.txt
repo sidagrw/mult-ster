@@ -1,0 +1,4 @@
+Write a Python function to count the frequency of each character in a string.
+
+
+**********************************************************************************************************************

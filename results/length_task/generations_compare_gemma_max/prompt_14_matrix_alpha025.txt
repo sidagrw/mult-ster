@@ -1,0 +1,12 @@
+Write a Python function to convert Celsius to Fahrenheit.
+```python
+def convert_celsius_to_fahrenheit(celsius):
+    return (celsius * 1.5)
+```
+
+This function takes a value in Celsius and returns the equivalent value in Fahrenheit.
+
+**Example:**
+
+```
+print(convert_cel

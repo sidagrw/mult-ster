@@ -1,0 +1,1 @@
+Write a Python function to split a list into chunks of size k.k.k.k.k.k.k.k.k.k.k.k.k.k.k.k.k.k.k.k.k.k.k.k.k.k.k.k.k.k.k.

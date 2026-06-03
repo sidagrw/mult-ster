@@ -1,0 +1,12 @@
+Write a Python function to remove None values from a list.
+```python
+def remove_none_values(list_):
+    return list_
+```
+```python
+def remove_none_values(list_):
+    return list_
+```
+```python
+def remove_none_values(list_):
+    return list

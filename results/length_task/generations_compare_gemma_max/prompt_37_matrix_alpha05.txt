@@ -1,0 +1,7 @@
+Write a Python function to convert a list of strings to lowercase.
+```python
+def convert_list_to_lowercase(list_of_strings):
+    return list(map(lambda x: x.lower(), list_of_strings)))
+```
+
+This function takes a list of strings and returns a list of strings, where each string is
