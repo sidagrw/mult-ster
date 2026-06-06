@@ -15,7 +15,7 @@ project_dir = os.path.join(script_dir, '..')
 sys.path.append(project_dir)
 
 from utils.model_utils import load_model_from_tl_name
-from utils.generation_utils import generate, generate_with_hooks, activation_addition_hook, direction_projection_hook
+from utils.generation_utils import generate, generate_with_hooks, activation_addition_hook, direction_projection_hook, multiplicative_steering_hook
 from ifeval_scripts.evaluation_main import test_instruction_following_loose
 
 config_path = os.path.join(project_dir, 'config/format')
@@ -95,11 +95,16 @@ def run_experiment(args: DictConfig):
                 instr_dir = torch.tensor(match_row['instr_dir'].values[0], device=args.device)
                 layer_idx = int(match_row['selected_layer'].values[0])
                 avg_proj = torch.tensor(match_row['avg_proj'].values[0], device=args.device)
+                # NEW: Yank the Multiplicativev Task Matrix
+                # Numpy Array --> GPU Tensor
+                task_matrix = torch.tensor(match_row['task_matrix'].values[0], device=args.device)
             else:
                 print(f'❌ Instruction {instr} (or {instr_underscore}) not found!')
                 instr_dir = torch.zeros(model.cfg.d_model).to(args.device)
                 layer_idx = -1
                 avg_proj = torch.tensor(-1.0, device=args.device)
+                # We use torch.eye since multiplying by identity matrix changes nothing
+                task_matrix = torch.eye(model.cfg.d_model, device=args.device)
         
         # format the prompt
         if args.model_name == 'gemma-2-2b' or args.model_name == 'gemma-2-9b':
@@ -124,6 +129,8 @@ def run_experiment(args: DictConfig):
                 hook_fn = functools.partial(activation_addition_hook,direction=intervention_dir, weight=args.steering_weight)
             elif args.steering == 'adjust_rs':
                 hook_fn = functools.partial(direction_projection_hook, direction=intervention_dir, value_along_direction=avg_proj)
+            elif args.steering == "mult_rs":
+                hook_fn = functools.partial(multiplicative_steering_hook, task_matrix=task_matrix, alpha=args.steering_weight)
             else:
                 raise ValueError(f"Unknown steering method: {args.steering}")
 

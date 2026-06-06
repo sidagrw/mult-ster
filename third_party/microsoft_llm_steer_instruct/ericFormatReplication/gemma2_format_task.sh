@@ -19,13 +19,11 @@ python3 "$SCRIPT_DIR/prep_data.py"
 #     model_name="$MODEL" \
 #     use_data_subset=True \
 #     data_subset_ratio=0.1 \
-#     +batch_size=128
 
 # 4. Search
 # python3 "$PARENT_DIR/format/find_best_layer.py" \
 #     model_name="$MODEL" \
 #     representations_folder="subset_0.1" \
-#     +batch_size=128 \
 #     n_examples_per_instruction=5
 
 python3 format/precompute_ivs.py \
@@ -40,4 +38,4 @@ python3 "$PARENT_DIR/format/evaluate.py" \
     include_instructions=false \
     source_layer_idx=$BEST_LAYER \
     max_generation_length=128 \
-    steering_weight=2
+    steering_weight=1

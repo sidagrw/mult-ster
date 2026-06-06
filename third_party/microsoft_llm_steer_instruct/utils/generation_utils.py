@@ -58,6 +58,32 @@ def direction_projection_hook(
     adjusted_activations = adjust_vectors(activation.squeeze(), direction, value_along_direction)
     return adjusted_activations.unsqueeze(0)
 
+def compute_task_matrix(X, X_plus):
+    """
+    X: (N, d) matrix of uninstructed activations
+    X_plus: (N, d) matrix of instructed activations
+    Returns: W (d, d) task matrix
+    """
+    # Solve X @ W.T = X_plus
+    # W.T = pinv(X) @ X_plus
+    W_T, _, _, _ = np.linalg.lstsq(X, X_plus, rcond=None)
+    return W_T.T # Return W as (d, d)
+
+def multiplicative_steering_hook(
+    activation,  # Shape: [batch, seq_len, d]
+    hook,
+    task_matrix, # Shape: [d, d]
+    alpha=1.0,
+):
+    # Calculate Wx'
+    # activation.squeeze() handles the [1, 1, d] shape from HookedTransformer
+    steered_act = torch.matmul(activation, task_matrix.t())
+    
+    # Apply interpolation formula: x' + alpha * (Wx' - x')
+    new_activation = activation + alpha * (steered_act - activation)
+    
+    return new_activation
+
 
 def generate_with_hooks(
     model,
