@@ -20,7 +20,8 @@ base_path = 'out/google/gemma-2-2b-it'
 paths = {
     'Baseline': f'{base_path}/no_instr/out.jsonl',
     'Adjustive': f'{base_path}/adjust_rs_20_perplexity/out.jsonl',
-    'Regular': f'{base_path}/add_vector_20_perplexity_2/out.jsonl'
+    'Regular': f'{base_path}/add_vector_20_perplexity_1/out.jsonl',
+    'Multiplicative': f'{base_path}/mult_rs_20_perplexity/out.jsonl'
 }
 
 # Collect all stats
@@ -36,7 +37,7 @@ df_final = df_final[(df_final.T != 0).any()]
 df_final.index = [i.split(':')[-1].replace('_', ' ').title() for i in df_final.index]
 
 # --- PLOTTING ---
-ax = df_final.plot(kind='bar', figsize=(14, 7), width=0.8, color=['#95a5a6', '#3498db', '#e74c3c'], edgecolor='black')
+ax = df_final.plot(kind='bar', figsize=(14, 7), width=0.8, color=['#95a5a6', '#3498db', '#e74c3c', '#1e792c'], edgecolor='black')
 
 plt.title('Dynamic Replication Results: Gemma-2-2B Steering', fontsize=16, fontweight='bold')
 plt.ylabel('IFEval Accuracy', fontsize=12)
@@ -52,5 +53,5 @@ for p in ax.patches:
                     ha='center', va='center', xytext=(0, 7), textcoords='offset points', fontsize=8)
 
 plt.tight_layout()
-plt.savefig('dynamic_replication_resultsALL.png', dpi=300)
+plt.savefig('dynamic_replication_resultsMultSteer.png', dpi=300)
 print('Success! Graph saved as dynamic_replication_results.png')
