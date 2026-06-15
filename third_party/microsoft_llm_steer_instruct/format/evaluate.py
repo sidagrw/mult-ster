@@ -130,7 +130,7 @@ def run_experiment(args: DictConfig):
             elif args.steering == 'adjust_rs':
                 hook_fn = functools.partial(direction_projection_hook, direction=intervention_dir, value_along_direction=avg_proj)
             elif args.steering == "mult_rs":
-                hook_fn = functools.partial(multiplicative_steering_hook, task_matrix=task_matrix, alpha=args.steering_weight)
+                hook_fn = functools.partial(multiplicative_steering_hook, task_matrix=task_matrix, alpha=args.mult_steering_weight)
             else:
                 raise ValueError(f"Unknown steering method: {args.steering}")
 
