@@ -38,6 +38,14 @@ python3 "$PARENT_DIR/format/evaluate.py" \
     model_name="$MODEL" \
     representations_folder="all" \
     include_instructions=false \
+    steering="none" \
+    source_layer_idx=$BEST_LAYER \
+    steering_weight=2.0 \
+
+python3 "$PARENT_DIR/format/evaluate.py" \
+    model_name="$MODEL" \
+    representations_folder="all" \
+    include_instructions=false \
     steering="add_vector" \
     source_layer_idx=$BEST_LAYER \
     steering_weight=2.0 \
