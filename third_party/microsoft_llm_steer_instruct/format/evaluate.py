@@ -9,6 +9,7 @@ from omegaconf import DictConfig, OmegaConf
 import hydra
 import functools
 from transformer_lens import utils as tlutils
+from google.colab import drive
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 project_dir = os.path.join(script_dir, '..')
@@ -64,6 +65,43 @@ def run_experiment(args: DictConfig):
         pre_computed_ivs = pd.read_hdf(file_path, key='df')
 
     out_lines = []
+
+
+    # Preparing the File
+    # <------------------------------------->
+    out_folder = os.path.join(script_dir, args.output_path, args.model_name)
+    if not args.include_instructions and args.steering == 'none':
+        out_folder = os.path.join(out_folder, 'no_instr')
+    elif not args.include_instructions and args.steering != 'none':
+        out_folder = os.path.join(out_folder, f"{args.steering}_{args.source_layer_idx}")
+        if args.use_perplexity:
+            out_folder += '_perplexity'
+        if args.steering == 'add_vector':
+            out_folder += f"_{args.steering_weight}"
+    elif args.steering != 'none':
+        out_folder = os.path.join(out_folder, f"instr_plus_{args.steering}_{args.source_layer_idx}")
+        if args.use_perplexity:
+            out_folder += '_perplexity'
+        if args.steering == 'add_vector':
+            out_folder += f"_{args.steering_weight}"
+    else:
+        out_folder = os.path.join(out_folder, 'standard')
+
+    if args.steering == 'none' and (not args.hf_model):
+        out_folder += '_no_hf'
+
+    if args.cross_model_steering:
+        out_folder += '_cross_model'
+
+    os.makedirs(out_folder, exist_ok=True)
+    file_name = 'out.jsonl' if not args.dry_run else 'test.jsonl'
+    out_file = os.path.join(out_folder, file_name)
+
+    drive_path = f"/content/drive/MyDrive/LLM_STEER_BACKUP/{args.model_name}_{args.steering}"
+    os.makedirs(drive_path, exist_ok=True)
+    open(out_file, 'w').close()
+    # <------------------------------------->
+
 
     # Run the model on each input
     for i, r in data_df.iterrows():
@@ -151,46 +189,47 @@ def run_experiment(args: DictConfig):
         output = test_instruction_following_loose(r, prompt_to_response)
         row['follow_all_instructions'] = output.follow_all_instructions
 
-        out_lines.append(row)
+        with open(out_file, 'a') as f:
+            f.write(json.dumps(row) + '\n')
+
+        if i % 5 == 0:
+            os.system(f"cp {out_file} {drive_path}/backup_out.jsonl")
+
         p_bar.update(1)
 
-    # Build the output folder path
-    out_folder = os.path.join(script_dir, args.output_path, args.model_name)
-    if not args.include_instructions and args.steering == 'none':
-        out_folder = os.path.join(out_folder, 'no_instr')
-    elif not args.include_instructions and args.steering != 'none':
-        out_folder = os.path.join(out_folder, f"{args.steering}_{args.source_layer_idx}")
-        if args.use_perplexity:
-            out_folder += '_perplexity'
-        if args.steering == 'add_vector':
-            out_folder += f"_{args.steering_weight}"
-    elif args.steering != 'none':
-        out_folder = os.path.join(out_folder, f"instr_plus_{args.steering}_{args.source_layer_idx}")
-        if args.use_perplexity:
-            out_folder += '_perplexity'
-        if args.steering == 'add_vector':
-            out_folder += f"_{args.steering_weight}"
-    else:
-        out_folder = os.path.join(out_folder, 'standard')
+    # Build the output folder path (Already done above refactored)
+    # out_folder = os.path.join(script_dir, args.output_path, args.model_name)
+    # if not args.include_instructions and args.steering == 'none':
+    #     out_folder = os.path.join(out_folder, 'no_instr')
+    # elif not args.include_instructions and args.steering != 'none':
+    #     out_folder = os.path.join(out_folder, f"{args.steering}_{args.source_layer_idx}")
+    #     if args.use_perplexity:
+    #         out_folder += '_perplexity'
+    #     if args.steering == 'add_vector':
+    #         out_folder += f"_{args.steering_weight}"
+    # elif args.steering != 'none':
+    #     out_folder = os.path.join(out_folder, f"instr_plus_{args.steering}_{args.source_layer_idx}")
+    #     if args.use_perplexity:
+    #         out_folder += '_perplexity'
+    #     if args.steering == 'add_vector':
+    #         out_folder += f"_{args.steering_weight}"
+    # else:
+    #     out_folder = os.path.join(out_folder, 'standard')
 
-    if args.steering == 'none' and (not args.hf_model):
-        out_folder += '_no_hf'
+    # if args.steering == 'none' and (not args.hf_model):
+    #     out_folder += '_no_hf'
 
-    if args.cross_model_steering:
-        out_folder += '_cross_model'
+    # if args.cross_model_steering:
+    #     out_folder += '_cross_model'
 
-    os.makedirs(out_folder, exist_ok=True)
+    # os.makedirs(out_folder, exist_ok=True)
 
-    file_name = 'out.jsonl' if not args.dry_run else 'test.jsonl'
-    out_file = os.path.join(out_folder, file_name)
+    # file_name = 'out.jsonl' if not args.dry_run else 'test.jsonl'
+    # out_file = os.path.join(out_folder, file_name)
 
     # dump args in the folder
     with open(os.path.join(out_folder, 'args.json'), 'w') as f:
         f.write(OmegaConf.to_yaml(args))
-
-    with open(out_file, 'w') as f:
-        for line in out_lines:
-            f.write(json.dumps(line) + '\n')
 
 # %%
 if __name__ == '__main__':
