@@ -16,12 +16,12 @@ def get_stats(path):
     return df.groupby('task')['follow_all_instructions'].mean()
 
 # --- DEFINE PATHS ---
-base_path = 'out/google/gemma-2-2b-it'
+base_path = ''
 paths = {
-    'Baseline': f'{base_path}/no_instr/out.jsonl',
-    'Adjustive': f'{base_path}/adjust_rs_20_perplexity/out.jsonl',
-    'Regular': f'{base_path}/add_vector_20_perplexity_1/out.jsonl',
-    'Multiplicative': f'{base_path}/mult_rs_20_perplexity/out.jsonl'
+    'Baseline': f'NOSTEER_backup_out.jsonl',
+    'Adjustive': f'ADJUSTRS_backup_out.jsonl',
+    'Regular': f'ADDVECTOR_backup_out.jsonl',
+    # 'Multiplicative': f'{base_path}/mult_rs_20_perplexity/out.jsonl'
 }
 
 # Collect all stats
@@ -53,5 +53,5 @@ for p in ax.patches:
                     ha='center', va='center', xytext=(0, 7), textcoords='offset points', fontsize=8)
 
 plt.tight_layout()
-plt.savefig('dynamic_replication_resultsMultSteer.png', dpi=300)
+plt.savefig('dynamic_replication_resultsMultSteerv2.png', dpi=300)
 print('Success! Graph saved as dynamic_replication_results.png')
