@@ -95,33 +95,30 @@ def generate_with_hooks(
     return_decoded=True
 ):
     """
-    FAST VERSION: Uses KV-Caching and removes hallucinated 'Q:' yapping.
+    FAST VERSION: Uses KV-Caching via model.generate with hooks applied via context manager.
     """
     with torch.no_grad():
-        # 1. Use the fast engine (KV-Caching is active here)
-        # It handles the Multiplicative/Additive hooks automatically via fwd_hooks
-        all_toks = model.generate(
-            input=toks,
-            max_new_tokens=max_tokens_generated,
-            fwd_hooks=fwd_hooks,
-            do_sample=False,
-            verbose=verbose,
-            stop_at_eos=True
-        )
+        # 1. Apply the hooks using the context manager
+        # This ensures the hooks are active for every forward pass inside .generate()
+        with model.hooks(fwd_hooks=fwd_hooks):
+            all_toks = model.generate(
+                input=toks,
+                max_new_tokens=max_tokens_generated,
+                do_sample=False,   # Greedy decoding
+                verbose=verbose,
+                stop_at_eos=True   # Stop at EOS or 32007 (Phi)
+            )
 
-    # 2. Extract only the generated tokens
+    # 2. Extract only the newly generated tokens
     generated_toks = all_toks[:, toks.shape[1]:]
 
     if return_decoded:
-        # 3. Decode the tokens into text
+        # 3. Decode
         decoded_list = model.tokenizer.batch_decode(generated_toks, skip_special_tokens=True)
         
-        # 4. THE "Q:" FIX (Post-Processing)
-        # Instead of stopping token-by-token, we just cut the string 
-        # if the model started hallucinating a new Question.
+        # 4. Keep the "Q:" Hallucination Fix
         cleaned_decoded = []
         for text in decoded_list:
-            # Gemma often generates "\nQ:" or "Q:" when it starts yapping
             if "Q:" in text:
                 text = text.split("Q:")[0]
             cleaned_decoded.append(text.strip())
