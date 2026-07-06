@@ -1,5 +1,6 @@
 import torch
 from tqdm import tqdm
+import numpy as np
 
 
 def generate(model, tokenizer, prompt, device, max_new_tokens=512):
@@ -93,33 +94,41 @@ def generate_with_hooks(
     verbose: bool = False,
     return_decoded=True
 ):
-
-    all_toks = torch.zeros((toks.shape[0], toks.shape[1] + max_tokens_generated), dtype=torch.long, device=toks.device)
-    all_toks[:, :toks.shape[1]] = toks
-
-    p_bar = tqdm(range(max_tokens_generated)) if verbose else range(max_tokens_generated)
+    """
+    FAST VERSION: Uses KV-Caching and removes hallucinated 'Q:' yapping.
+    """
     with torch.no_grad():
-        for i in p_bar:
-            with model.hooks(fwd_hooks=fwd_hooks):
-                logits = model(all_toks[:, :-max_tokens_generated + i])
-                next_tokens = logits[:, -1, :].argmax(dim=-1) # greedy decoding
-                if next_tokens[0] == model.tokenizer.eos_token_id or next_tokens[0] == 32007:
-                    break
-                if next_tokens[0] == 235292 and all_toks[0, -max_tokens_generated+i-1] == 235368:
-                    # Stopping the generation as the model is generating a new question (Q:)
-                    # remove the Q
-                    all_toks[0, -max_tokens_generated+i-1] = 0
-                    break
-                all_toks[:,-max_tokens_generated+i] = next_tokens
+        # 1. Use the fast engine (KV-Caching is active here)
+        # It handles the Multiplicative/Additive hooks automatically via fwd_hooks
+        all_toks = model.generate(
+            input=toks,
+            max_new_tokens=max_tokens_generated,
+            fwd_hooks=fwd_hooks,
+            do_sample=False,
+            verbose=verbose,
+            stop_at_eos=True
+        )
 
-    # truncate the tensor to remove padding
-    all_toks = all_toks[:, :toks.shape[1] + i]
+    # 2. Extract only the generated tokens
+    generated_toks = all_toks[:, toks.shape[1]:]
 
     if return_decoded:
-        return model.tokenizer.batch_decode(all_toks[:, toks.shape[1]:], skip_special_tokens=True)
+        # 3. Decode the tokens into text
+        decoded_list = model.tokenizer.batch_decode(generated_toks, skip_special_tokens=True)
+        
+        # 4. THE "Q:" FIX (Post-Processing)
+        # Instead of stopping token-by-token, we just cut the string 
+        # if the model started hallucinating a new Question.
+        cleaned_decoded = []
+        for text in decoded_list:
+            # Gemma often generates "\nQ:" or "Q:" when it starts yapping
+            if "Q:" in text:
+                text = text.split("Q:")[0]
+            cleaned_decoded.append(text.strip())
+            
+        return cleaned_decoded
     else:
         return all_toks
-
 
 def compute_perplexity(text, device='cuda', perplexity_model=None, perplexity_tokenizer=None):
     # Tokenize the input text

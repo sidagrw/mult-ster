@@ -7,13 +7,14 @@ import torch
 from tqdm import tqdm
 from omegaconf import DictConfig
 import hydra
-from utils.generation_utils import compute_task_matrix
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 project_dir = os.path.join(script_dir, '..')
 sys.path.append(project_dir)
 
 config_path = os.path.join(project_dir, 'config/format')
+
+from utils.generation_utils import compute_task_matrix
 
 GEMMA_2B_W_INSTR = {
     'change_case:capital_word_frequency': 23,
@@ -87,34 +88,34 @@ def precompute_vectors(args: DictConfig):
 
     #     instr_df = validation_df[validation_df.single_instruction_id == instr]
         
-    #     if args.use_perplexity:
-    #         # add boolean column that is true when perplexity is low
-    #         instr_df['low_perplexity'] = instr_df.perplexity < args.preplexity_threshold
+    # if args.use_perplexity:
+    #     # add boolean column that is true when perplexity is low
+    #     instr_df['low_perplexity'] = instr_df.perplexity < args.preplexity_threshold
 
-    #         df_group_by_layer = instr_df[['layer', 'follow_all_instructions', 'low_perplexity']].groupby('layer').mean()
+    #     df_group_by_layer = instr_df[['layer', 'follow_all_instructions', 'low_perplexity']].groupby('layer').mean()
 
-    #         if args.model_name == 'gemma-2-9b' or args.model_name == 'gemma-2-2b':
-    #             baseline_low_perplexity = df_group_by_layer.loc[-1, 'low_perplexity']
-    #         else:
-    #             baseline_low_perplexity = 0
-
-    #         # get accuracy for layer -1
-    #         accuracy_layer_minus_1 = df_group_by_layer.loc[-1, 'follow_all_instructions']
-
-    #         df_group_by_layer.loc[df_group_by_layer.low_perplexity > baseline_low_perplexity, 'follow_all_instructions'] = 0
-
-    #         # restore accuracy for layer -1
-    #         df_group_by_layer.loc[-1, 'follow_all_instructions'] = accuracy_layer_minus_1
-
-    #         df_group_by_layer.loc[df_group_by_layer.low_perplexity > baseline_low_perplexity, 'follow_all_instructions'] = 0
-    #         max_accuracy = df_group_by_layer.follow_all_instructions.max()
-    #         optimal_layer = df_group_by_layer[df_group_by_layer.follow_all_instructions == max_accuracy].index
-    #         optimal_layers[instr] = optimal_layer[0]
-
+    #     if args.model_name == 'gemma-2-9b' or args.model_name == 'gemma-2-2b':
+    #         baseline_low_perplexity = df_group_by_layer.loc[-1, 'low_perplexity']
     #     else:
-    #         max_accuracy = instr_df[['layer', 'follow_all_instructions']].groupby('layer').mean().follow_all_instructions.max()
-    #         optimal_layer = instr_df[['layer', 'follow_all_instructions']].groupby('layer').mean()[instr_df[['layer', 'follow_all_instructions']].groupby('layer').mean().follow_all_instructions == max_accuracy].index
-    #         optimal_layers[instr] = optimal_layer[0]
+    #         baseline_low_perplexity = 0
+
+    #     # get accuracy for layer -1
+    #     accuracy_layer_minus_1 = df_group_by_layer.loc[-1, 'follow_all_instructions']
+
+    #     df_group_by_layer.loc[df_group_by_layer.low_perplexity > baseline_low_perplexity, 'follow_all_instructions'] = 0
+
+    #     # restore accuracy for layer -1
+    #     df_group_by_layer.loc[-1, 'follow_all_instructions'] = accuracy_layer_minus_1
+
+    #     df_group_by_layer.loc[df_group_by_layer.low_perplexity > baseline_low_perplexity, 'follow_all_instructions'] = 0
+    #     max_accuracy = df_group_by_layer.follow_all_instructions.max()
+    #     optimal_layer = df_group_by_layer[df_group_by_layer.follow_all_instructions == max_accuracy].index
+    #     optimal_layers[instr] = optimal_layer[0]
+
+    # else:
+    #     max_accuracy = instr_df[['layer', 'follow_all_instructions']].groupby('layer').mean().follow_all_instructions.max()
+    #     optimal_layer = instr_df[['layer', 'follow_all_instructions']].groupby('layer').mean()[instr_df[['layer', 'follow_all_instructions']].groupby('layer').mean().follow_all_instructions == max_accuracy].index
+    #     optimal_layers[instr] = optimal_layer[0]
 
     rows = []
 
@@ -175,6 +176,10 @@ def precompute_vectors(args: DictConfig):
         X = hs_no_instr[:, selected_layer, -1, :]
         X_plus = hs_instr[:, selected_layer, -1, :]
 
+        print(f"Number of training instances for: {instr}")
+        print(f"Number of training instances (N): {X.shape[0]}")
+        print(f"Activation feature dimensionality (D): {X.shape[1]}")
+
         proj = X_plus.to(args.device) @ instr_dir.to(args.device)
         proj_no_instr = X.to(args.device) @ instr_dir.to(args.device)
 
@@ -210,3 +215,4 @@ def precompute_vectors(args: DictConfig):
             
 if __name__ == '__main__':
     precompute_vectors()
+# %%

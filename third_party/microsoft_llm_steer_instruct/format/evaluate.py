@@ -102,6 +102,8 @@ def run_experiment(args: DictConfig):
     open(out_file, 'w').close()
     # <------------------------------------->
 
+    # GPU Caching data structures
+    gpu_cache = {}
 
     # Run the model on each input
     for i, r in data_df.iterrows():
@@ -128,14 +130,19 @@ def run_experiment(args: DictConfig):
                 target_key = None
 
             if target_key is not None:
-                # Grab the data using the key that actually worked
                 match_row = pre_computed_ivs[pre_computed_ivs['instruction'] == target_key]
-                instr_dir = torch.tensor(match_row['instr_dir'].values[0], device=args.device)
-                layer_idx = int(match_row['selected_layer'].values[0])
-                avg_proj = torch.tensor(match_row['avg_proj'].values[0], device=args.device)
-                # NEW: Yank the Multiplicativev Task Matrix
-                # Numpy Array --> GPU Tensor
-                task_matrix = torch.tensor(match_row['task_matrix'].values[0], device=args.device)
+                if target_key not in gpu_cache:
+                    gpu_cache[target_key] = {
+                        'matrix': torch.tensor(match_row['task_matrix'].values[0], device=args.device),
+                        'vector': torch.tensor(match_row['instr_dir'].values[0], device=args.device),
+                        'layer': int(match_row['selected_layer'].values[0]),
+                        'proj': torch.tensor(match_row['avg_proj'].values[0], device=args.device)
+                    }
+                # Grab the data using the key that actually worked
+                task_matrix = gpu_cache[target_key]['matrix']
+                instr_dir = gpu_cache[target_key]['vector']
+                layer_idx = gpu_cache[target_key]['layer']
+                avg_proj = gpu_cache[target_key]['proj']
             else:
                 print(f'❌ Instruction {instr} (or {instr_underscore}) not found!')
                 instr_dir = torch.zeros(model.cfg.d_model).to(args.device)
