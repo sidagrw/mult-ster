@@ -21,7 +21,7 @@ paths = {
     'Baseline': f'NOSTEER_backup_out.jsonl',
     'Adjustive': f'ADJUSTRS_backup_out.jsonl',
     'Regular': f'ADDVECTOR_backup_out.jsonl',
-    # 'Multiplicative': f'{base_path}/mult_rs_20_perplexity/out.jsonl'
+    'Multiplicative': f'MULTRS_backup_out.jsonl'
 }
 
 # Collect all stats

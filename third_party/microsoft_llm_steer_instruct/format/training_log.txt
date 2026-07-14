@@ -1,0 +1,97 @@
+Number of samples for each category in training
+Number of training instances for: punctuation:no_comma
+Number of training instances (N): 407
+Activation feature dimensionality (D): 2304
+  4%|████                                                                                                     | 1/26 [00:07<02:56,  7.05s/it]
+Number of training instances for: change_case:english_lowercase
+Number of training instances (N): 454
+Activation feature dimensionality (D): 2304
+  8%|████████                                                                                                 | 2/26 [00:14<03:01,  7.57s/it]
+Number of training instances for: detectable_format:number_bullet_lists
+Number of training instances (N): 461
+Activation feature dimensionality (D): 2304
+ 12%|████████████                                                                                             | 3/26 [00:23<03:04,  8.02s/it]
+Number of training instances for: detectable_format:json_format
+Number of training instances (N): 409
+Activation feature dimensionality (D): 2304
+ 15%|████████████████▏                                                                                        | 4/26 [00:31<02:54,  7.91s/it]
+File C:\Users\Owner\Downloads\mult-ster\third_party\microsoft_llm_steer_instruct\format/representations/google/gemma-2-2b-it/all/language_response_language_kn.h5 does not exist
+Number of training instances for: startend:end_checker
+Number of training instances (N): 464
+Activation feature dimensionality (D): 2304
+ 23%|████████████████████████▏                                                                                | 6/26 [00:40<02:03,  6.17s/it]
+Number of training instances for: detectable_format:multiple_sections
+Number of training instances (N): 481
+Activation feature dimensionality (D): 2304
+ 27%|████████████████████████████▎                                                                            | 7/26 [00:50<02:14,  7.09s/it]
+Number of training instances for: language:response_language_pa
+Number of training instances (N): 18
+Activation feature dimensionality (D): 2304
+ 31%|████████████████████████████████▎                                                                        | 8/26 [00:50<01:34,  5.25s/it]
+Number of training instances for: startend:quotation
+Number of training instances (N): 428
+Activation feature dimensionality (D): 2304
+ 35%|████████████████████████████████████▎                                                                    | 9/26 [00:58<01:44,  6.14s/it]
+Number of training instances for: language:response_language_mr
+Number of training instances (N): 22
+Activation feature dimensionality (D): 2304
+ 38%|████████████████████████████████████████                                                                | 10/26 [00:59<01:12,  4.55s/it]
+Number of training instances for: detectable_format:number_highlighted_sections
+Number of training instances (N): 465
+Activation feature dimensionality (D): 2304
+ 42%|████████████████████████████████████████████                                                            | 11/26 [01:08<01:26,  5.78s/it]
+Number of training instances for: detectable_format:title
+Number of training instances (N): 485
+Activation feature dimensionality (D): 2304
+ 46%|████████████████████████████████████████████████                                                        | 12/26 [01:17<01:34,  6.77s/it]
+Number of training instances for: language:response_language_fa
+Number of training instances (N): 24
+Activation feature dimensionality (D): 2304
+ 50%|████████████████████████████████████████████████████                                                    | 13/26 [01:18<01:04,  4.98s/it]
+Number of training instances for: change_case:english_capital
+Number of training instances (N): 436
+Activation feature dimensionality (D): 2304
+ 54%|████████████████████████████████████████████████████████                                                | 14/26 [01:26<01:12,  6.08s/it]
+Number of training instances for: change_case:capital_word_frequency
+Number of training instances (N): 471
+Activation feature dimensionality (D): 2304
+58%|███████████████████████████████████████████████████████████▉                                            | 15/26 [01:35<01:15,  6.91s/it]
+File C:\Users\Owner\Downloads\mult-ster\third_party\microsoft_llm_steer_instruct\format/representations/google/gemma-2-2b-it/all/language_response_language_ko.h5 does not exist
+
+Number of training instances for: detectable_format:constrained_response
+Number of training instances (N): 522
+Activation feature dimensionality (D): 2304
+65%|████████████████████████████████████████████████████████████████████                                    | 17/26 [01:45<00:54,  6.03s/it]Number of training instances for: language:response_language_sw
+Number of training instances (N): 15
+Activation feature dimensionality (D): 2304
+69%|████████████████████████████████████████████████████████████████████████                                | 18/26 [01:46<00:37,  4.66s/it]
+Number of training instances for: language:response_language_ru
+Number of training instances (N): 17
+Activation feature dimensionality (D): 2304
+73%|████████████████████████████████████████████████████████████████████████████                            | 19/26 [01:46<00:25,  3.58s/it]
+Number of training instances for: language:response_language_hi
+Number of training instances (N): 49
+Activation feature dimensionality (D): 2304
+77%|████████████████████████████████████████████████████████████████████████████████                        | 20/26 [01:47<00:17,  2.88s/it]
+Number of training instances for: language:response_language_gu
+Number of training instances (N): 20
+Activation feature dimensionality (D): 2304
+81%|████████████████████████████████████████████████████████████████████████████████████                    | 21/26 [01:48<00:11,  2.23s/it]
+Number of training instances for: language:response_language_te
+Number of training instances (N): 21
+Activation feature dimensionality (D): 2304
+85%|████████████████████████████████████████████████████████████████████████████████████████                | 22/26 [01:48<00:07,  1.76s/it]
+Number of training instances for: language:response_language_ar
+Number of training instances (N): 10
+Activation feature dimensionality (D): 2304
+88%|████████████████████████████████████████████████████████████████████████████████████████████            | 23/26 [01:49<00:04,  1.36s/it]
+Number of training instances for: language:response_language_ur
+Number of training instances (N): 19
+Activation feature dimensionality (D): 2304
+92%|████████████████████████████████████████████████████████████████████████████████████████████████        | 24/26 [01:49<00:02,  1.13s/it]
+File C:\Users\Owner\Downloads\mult-ster\third_party\microsoft_llm_steer_instruct\format/representations/google/gemma-2-2b-it/all/language_response_language_ne.h5 does not exist
+Number of training instances for: language:response_language_de
+Number of training instances (N): 13
+Activation feature dimensionality (D): 2304
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████| 26/26 [01:50<00:00,  4.24s/it]
+

@@ -107,8 +107,6 @@ def run_experiment(args: DictConfig):
 
     # Run the model on each input
     for i, r in data_df.iterrows():
-        if i < 95:
-            continue
         
         row = dict(r)
 
