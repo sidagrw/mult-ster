@@ -28,7 +28,7 @@ def compute_response_perplexity(args: DictConfig):
 
         print(f'Processing {args.model_name} | {setting} | {args.n_examples} examples | seed {args.seed}')
 
-        path = f'{folder}/{args.model_name}/n_examples{args.n_examples}_seed{args.seed}'
+        path = f'{folder}/{args.model_name}/n_examples{args.n_examples}_seed{args.seed}_{args.steering}'
         file = f'{path}/out_{setting}.jsonl'
         with open(file, 'r') as f:
             results = [json.loads(line) for line in f]

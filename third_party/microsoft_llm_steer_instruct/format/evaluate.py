@@ -70,41 +70,50 @@ def run_experiment(args: DictConfig):
     # Preparing the File
     # <------------------------------------->
     out_folder = os.path.join(script_dir, args.output_path, args.model_name)
+    drive_path = f"/content/drive/Shareddrives/Eric/LLM_STEER_BACKUP/{args.model_name}"
     if not args.include_instructions and args.steering == 'none':
         out_folder = os.path.join(out_folder, 'no_instr')
+        drive_path = os.path.join(drive_path, 'no_instr')
     elif not args.include_instructions and args.steering != 'none':
         out_folder = os.path.join(out_folder, f"{args.steering}_{args.source_layer_idx}")
+        drive_path = os.path.join(drive_path, f"{args.steering}_{args.source_layer_idx}")
         if args.use_perplexity:
             out_folder += '_perplexity'
+            drive_path += '_perplexity'
         if args.steering == 'add_vector':
             out_folder += f"_{args.steering_weight}"
+            drive_path += f"_{args.steering_weight}"
     elif args.steering != 'none':
         out_folder = os.path.join(out_folder, f"instr_plus_{args.steering}_{args.source_layer_idx}")
+        drive_path = os.path.join(drive_path, f"instr_plus_{args.steering}_{args.source_layer_idx}")
         if args.use_perplexity:
             out_folder += '_perplexity'
+            drive_path += '_perplexity'
         if args.steering == 'add_vector':
             out_folder += f"_{args.steering_weight}"
+            drive_path += f"_{args.steering_weight}"
     else:
         out_folder = os.path.join(out_folder, 'standard')
+        drive_path = os.path.join(drive_path, 'standard')
 
     if args.steering == 'none' and (not args.hf_model):
         out_folder += '_no_hf'
+        drive_path += '_no_hf'
 
     if args.cross_model_steering:
         out_folder += '_cross_model'
+        drive_path += '_cross_model'
 
     os.makedirs(out_folder, exist_ok=True)
     file_name = 'out.jsonl' if not args.dry_run else 'test.jsonl'
     out_file = os.path.join(out_folder, file_name)
 
-    drive_path = f"/content/drive/MyDrive/LLM_STEER_BACKUP/{args.model_name}_{args.steering}"
     os.makedirs(drive_path, exist_ok=True)
     open(out_file, 'w').close()
     # <------------------------------------->
 
     # GPU Caching data structures
     gpu_cache = {}
-
     # Run the model on each input
     for i, r in data_df.iterrows():
         
@@ -136,7 +145,7 @@ def run_experiment(args: DictConfig):
                     gpu_cache[target_key] = {
                         'matrix': torch.tensor(match_row['task_matrix'].values[0], device=args.device),
                         'vector': torch.tensor(match_row['instr_dir'].values[0], device=args.device),
-                        'layer': int(match_row['selected_layer'].values[0]),
+                        'layer': int(match_row[f'selected_layer_{args.steering}'].values[0]),
                         'proj': torch.tensor(match_row['avg_proj'].values[0], device=args.device)
                     }
                 # Grab the data using the key that actually worked

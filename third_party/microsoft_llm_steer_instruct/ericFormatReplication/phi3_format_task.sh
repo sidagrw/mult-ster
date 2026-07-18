@@ -9,7 +9,7 @@ PARENT_DIR="$( cd "$SCRIPT_DIR/.." &> /dev/null && pwd )"
 export PYTHONPATH="$PYTHONPATH:$PARENT_DIR"
 
 MODEL="phi-3"
-DRIVE_BACKUP_DIR="/content/drive/MyDrive/LLM_STEER_BACKUP"
+DRIVE_BACKUP_DIR="/content/drive/Shareddrives/Eric/LLM_STEER_BACKUP"
 REPS_DIR="$PARENT_DIR/format/representations/$MODEL/all"
 REPS_ZIP="$DRIVE_BACKUP_DIR/${MODEL}_reps.zip"
 
@@ -63,7 +63,8 @@ python3 "$PARENT_DIR/format/find_best_layer.py" \
     n_examples_per_instruction=$N_EXAMPLES \
     seed=$SEED \
     include_instructions=$INCLUDE_INSTR \
-    steering="adjust_rs"
+    steering="mult_rs" \
+    +mult_steering_weight=0.5
 
 # --------------------------------------------------------------------
 # 4. Add GPT-2 perplexity to the sweep results (the missing middle step --
@@ -74,7 +75,8 @@ python3 "$PARENT_DIR/format/compute_response_perplexity.py" \
     model_name="$MODEL" \
     n_examples=$N_EXAMPLES \
     seed=$SEED \
-    include_instructions=$INCLUDE_INSTR
+    include_instructions=$INCLUDE_INSTR \
+    +steering="mult_rs"
 
 # --------------------------------------------------------------------
 # 5. Precompute instruction vectors / task matrices at the REAL
@@ -89,7 +91,8 @@ python3 "$PARENT_DIR/format/precompute_ivs.py" \
     n_examples=$N_EXAMPLES \
     seed=$SEED \
     include_instructions=$INCLUDE_INSTR \
-    use_perplexity=true
+    use_perplexity=true \
+    +steering="mult_rs"
 
 # --- Back up the resulting pre_computed_ivs h5 too, same pattern ---
 IVS_BACKUP_DIR="$DRIVE_BACKUP_DIR/${MODEL}_precomputed_ivs"

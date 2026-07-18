@@ -19,7 +19,7 @@ from omegaconf import DictConfig, OmegaConf
 import hydra
 import functools
 from transformer_lens import utils as tlutils
-from utils.generation_utils import generate_with_hooks, direction_projection_hook, activation_addition_hook
+from utils.generation_utils import generate_with_hooks, direction_projection_hook, activation_addition_hook, compute_task_matrix, multiplicative_steering_hook
 from ifeval_scripts.evaluation_main import test_instruction_following_loose
 
 config_path = os.path.join(project_dir, 'config/format')
@@ -137,6 +137,14 @@ def find_best_layer(args: DictConfig):
 
                     # get average projection along the instruction direction for each layer
                     avg_proj = proj.mean()
+                elif args.steering == "mult_rs":
+                    if len(hs_instr.shape) == 4:
+                        X = hs_no_instr[:, layer_idx, -1, :]
+                        X_plus = hs_instr[:, layer_idx, -1, :]
+                    else: 
+                        X = hs_no_instr[:, layer_idx, :]
+                        X_plus = hs_instr[:, layer_idx, :]
+                    task_matrix = compute_task_matrix(X, X_plus)
 
             # Run the model on each input
             for i, r in instr_data_df.iterrows():
@@ -173,6 +181,8 @@ def find_best_layer(args: DictConfig):
                         hook_fn = functools.partial(activation_addition_hook,direction=intervention_dir, weight=args.steering_weight)
                     elif args.steering == 'adjust_rs':
                         hook_fn = functools.partial(direction_projection_hook, direction=intervention_dir, value_along_direction=avg_proj)
+                    elif args.steering == "mult_rs":
+                        hook_fn = functools.partial(multiplicative_steering_hook, task_matrix=task_matrix, alpha=args.mult_steering_weight)
 
                     fwd_hooks = [(tlutils.get_act_name('resid_post', layer_idx), hook_fn)]
                     encoded_example = tokenizer(example, return_tensors='pt').to(device)
@@ -196,7 +206,7 @@ def find_best_layer(args: DictConfig):
 
     # write out_lines as jsonl
     folder = f'{script_dir}/{args.output_path}/{args.model_name}'
-    folder += f'/n_examples{args.n_examples_per_instruction}_seed{args.seed}'
+    folder += f'/n_examples{args.n_examples_per_instruction}_seed{args.seed}_{args.steering}'
     folder += '_cross_model' if args.cross_model_steering else ''
 
     os.makedirs(folder, exist_ok=True)

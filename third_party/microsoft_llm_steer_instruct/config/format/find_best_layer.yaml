@@ -13,7 +13,7 @@ cross_model_steering: False
 transformers_cache_dir: null
 
 seed: 42
-steering: 'adjust_rs'
+steering: 'adjust_rs' # 'adjust_rs', 'add_vector', 'mult_rs'
 steering_weight: 1.0
 representations_folder: 'all'
 

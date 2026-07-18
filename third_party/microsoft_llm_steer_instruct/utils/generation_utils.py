@@ -56,7 +56,9 @@ def direction_projection_hook(
     direction,
     value_along_direction,
 ):
-    adjusted_activations = adjust_vectors(activation.squeeze(), direction, value_along_direction)
+    # Drops all size-1 dimensions ONLY at index 0.
+    v = activation.squeeze(0)
+    adjusted_activations = adjust_vectors(v, direction, value_along_direction)
     return adjusted_activations.unsqueeze(0)
 
 def compute_task_matrix(X, X_plus):
