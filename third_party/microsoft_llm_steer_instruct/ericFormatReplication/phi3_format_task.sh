@@ -66,6 +66,12 @@ python3 "$PARENT_DIR/format/find_best_layer.py" \
     steering="mult_rs" \
     +mult_steering_weight=0.5
 
+# --- Back up immediately, right here, before step 4 even starts ---
+echo ">>> Backing up layer_search_out to Drive"
+mkdir -p "$DRIVE_BACKUP_DIR/${MODEL}_layer_search_out"
+cp -r "$PARENT_DIR/format/layer_search_out"/* "$DRIVE_BACKUP_DIR/${MODEL}_layer_search_out/"
+echo ">>> Backup done, safe to continue"
+
 # --------------------------------------------------------------------
 # 4. Add GPT-2 perplexity to the sweep results (the missing middle step --
 #    precompute_ivs.py's use_perplexity=True path requires this file to exist)
@@ -77,6 +83,9 @@ python3 "$PARENT_DIR/format/compute_response_perplexity.py" \
     seed=$SEED \
     include_instructions=$INCLUDE_INSTR \
     +steering="mult_rs"
+
+mkdir -p "$DRIVE_BACKUP_DIR/${MODEL}_layer_search_out_with_perplexity"
+cp -r "$PARENT_DIR/format/layer_search_out"/*/*_with_perplexity "$DRIVE_BACKUP_DIR/${MODEL}_layer_search_out_with_perplexity/"
 
 # --------------------------------------------------------------------
 # 5. Precompute instruction vectors / task matrices at the REAL
