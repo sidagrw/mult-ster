@@ -30,7 +30,7 @@ mkdir -p "$DRIVE_BACKUP_DIR"
 # --------------------------------------------------------------------
 if [ -f "$REPS_ZIP" ]; then
     echo ">>> Found existing backup at $REPS_ZIP, restoring instead of recomputing."
-    unzip -q -o "$REPS_ZIP" -d "$PARENT_DIR/format/representations/$MODEL"
+    unzip -q -o "$REPS_ZIP" -d "$PARENT_DIR/format/representations"
 else
     echo ">>> No existing backup found at $REPS_ZIP -- will compute representations from scratch."
 fi

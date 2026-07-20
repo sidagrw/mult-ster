@@ -18,10 +18,10 @@ def get_stats(path):
 # --- DEFINE PATHS ---
 base_path = ''
 paths = {
-    'Baseline': f'NOSTEER_backup_out.jsonl',
-    'Adjustive': f'ADJUSTRS_backup_out.jsonl',
-    'Regular': f'ADDVECTOR_backup_out.jsonl',
-    'Multiplicative': f'MULTRS_backup_out.jsonl'
+    'Baseline': f'phi-3_NOSTEER_backup_out.jsonl',
+    'Adjustive': f'phi-3_ADJUSTRS_backup_out.jsonl',
+    'Regular': f'phi-3_ADDVECTOR_backup_out.jsonl',
+    'Multiplicative': f'phi-3_MULTRS_backup_out.jsonl'
 }
 
 # Collect all stats
@@ -39,7 +39,7 @@ df_final.index = [i.split(':')[-1].replace('_', ' ').title() for i in df_final.i
 # --- PLOTTING ---
 ax = df_final.plot(kind='bar', figsize=(14, 7), width=0.8, color=['#95a5a6', '#3498db', '#e74c3c', '#1e792c'], edgecolor='black')
 
-plt.title('Dynamic Replication Results: Gemma-2-2B Steering', fontsize=16, fontweight='bold')
+plt.title('Dynamic Replication Results: Phi-3 Steering', fontsize=16, fontweight='bold')
 plt.ylabel('IFEval Accuracy', fontsize=12)
 plt.xlabel('Instruction Task', fontsize=12)
 plt.xticks(rotation=45, ha='right')
@@ -53,5 +53,5 @@ for p in ax.patches:
                     ha='center', va='center', xytext=(0, 7), textcoords='offset points', fontsize=8)
 
 plt.tight_layout()
-plt.savefig('dynamic_replication_resultsMultSteerv2.png', dpi=300)
+plt.savefig('phi-3_dynamic_replication_resultsMultSteerv2.png', dpi=300)
 print('Success! Graph saved as dynamic_replication_results.png')
